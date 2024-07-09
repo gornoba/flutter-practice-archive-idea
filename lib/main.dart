@@ -1,4 +1,5 @@
 import 'package:business_card/data/idea_info.dart';
+import 'package:business_card/screen/detail/detail-screen.dart';
 import 'package:business_card/screen/edit/edit-screen.dart';
 import 'package:business_card/screen/main/main-screen.dart';
 import 'package:business_card/screen/splash/splach-screen.dart';
@@ -29,6 +30,15 @@ class MyApp extends StatelessWidget {
           return MaterialPageRoute(
             builder: (context) {
               return EditScreen(
+                ideaInfo: ideaInfo,
+              );
+            },
+          );
+        } else if (settings.name == '/detail') {
+          final IdeaInfo? ideaInfo = settings.arguments as IdeaInfo?;
+          return MaterialPageRoute(
+            builder: (context) {
+              return DetailScreen(
                 ideaInfo: ideaInfo,
               );
             },

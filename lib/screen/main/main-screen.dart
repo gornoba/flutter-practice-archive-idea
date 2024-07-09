@@ -41,21 +41,56 @@ class _MainScreenState extends State<MainScreen> {
         child: ListView.builder(
           itemCount: listIdeaInfo.length,
           itemBuilder: (context, index) {
-            return listItem(index);
+            return GestureDetector(
+              child: listItem(index),
+              onTap: () async {
+                var result = await Navigator.pushNamed(
+                  context,
+                  '/detail',
+                  arguments: listIdeaInfo[index],
+                );
+
+                if (result != null) {
+                  await getIdeaInfo();
+
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            '아이디어가 ${result == 'update' ? '수정' : '삭제'} 되었습니다.'),
+                      ),
+                    );
+                  }
+                }
+              },
+            );
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           // 새 아이디어 작성 화면 이동
-          Navigator.pushNamed(context, '/edit');
+          var result = await Navigator.pushNamed(context, '/edit');
+          print(result);
+
+          if (result != null) {
+            await getIdeaInfo();
+
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('새로운 아이디어가 추가 되었습니다.'),
+                ),
+              );
+            }
+          }
         },
+        backgroundColor: Color(0xff7f52fd).withOpacity(0.7),
         child: Image.asset(
           'assets/ideas.png',
           width: 48,
           height: 48,
         ),
-        backgroundColor: Color(0xff7f52fd).withOpacity(0.7),
       ),
     );
   }

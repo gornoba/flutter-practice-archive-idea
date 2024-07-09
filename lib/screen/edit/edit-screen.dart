@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class EditScreen extends StatefulWidget {
   IdeaInfo? ideaInfo;
+
   EditScreen({super.key, this.ideaInfo});
 
   @override
@@ -28,6 +29,42 @@ class _EditScreenState extends State<EditScreen> {
   final dbHelper = DatabaseHelper();
 
   @override
+  void initState() {
+    super.initState();
+
+    // 기존 데이터가 있다면
+    if (widget.ideaInfo != null) {
+      _titleController.text = widget.ideaInfo!.title;
+      _motiveController.text = widget.ideaInfo!.motive;
+      _contentController.text = widget.ideaInfo!.content;
+      if (widget.ideaInfo!.feedback!.isNotEmpty) {
+        _feedbackController.text = widget.ideaInfo!.feedback!;
+      }
+      // feedback이 null이 아닐 때만 (기존 데이터가 있을 때만
+      priorityPoint = widget.ideaInfo!.priority;
+
+      initClickStatus();
+      switch (widget.ideaInfo!.priority) {
+        case 1:
+          isClickPoint1 = true;
+          break;
+        case 2:
+          isClickPoint2 = true;
+          break;
+        case 3:
+          isClickPoint3 = true;
+          break;
+        case 4:
+          isClickPoint4 = true;
+          break;
+        case 5:
+          isClickPoint5 = true;
+          break;
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +81,7 @@ class _EditScreenState extends State<EditScreen> {
           },
         ),
         title: Text(
-          '새 아이디어 작성하기',
+          widget.ideaInfo == null ? '새 아이디어 작성하기' : '아이디어 편집',
           style: TextStyle(
             color: Colors.black,
             fontSize: 16,
@@ -368,7 +405,7 @@ class _EditScreenState extends State<EditScreen> {
               ),
               GestureDetector(
                 child: Container(
-                  height: 41,
+                  height: 60,
                   alignment: Alignment.center,
                   child: Text('아이디어 작성완료'),
                   decoration: ShapeDecoration(
@@ -402,6 +439,7 @@ class _EditScreenState extends State<EditScreen> {
                     return;
                   }
 
+                  // 새 아이디어를 작성하는 경우
                   if (widget.ideaInfo == null) {
                     var ideaInfo = IdeaInfo(
                       title: titleString,
@@ -412,10 +450,24 @@ class _EditScreenState extends State<EditScreen> {
                       createdAt: DateTime.now().millisecondsSinceEpoch,
                     );
                     await setInsertIdeaInfo(ideaInfo);
-                  }
 
-                  if (mounted) {
-                    Navigator.pop(context);
+                    if (context.mounted) {
+                      Navigator.pop(context, 'insert');
+                    }
+                  } else {
+                    var ideaInfoModify = widget.ideaInfo;
+                    ideaInfoModify?.title = titleString;
+                    ideaInfoModify?.motive = motiveString;
+                    ideaInfoModify?.content = contentString;
+                    ideaInfoModify?.priority = priorityPoint;
+                    ideaInfoModify?.feedback =
+                        feedbackString.isNotEmpty ? feedbackString : '';
+
+                    await setUpdateIdeaInfo(ideaInfoModify!);
+
+                    if (context.mounted) {
+                      Navigator.pop(context, 'update');
+                    }
                   }
                 },
               ),
@@ -429,6 +481,11 @@ class _EditScreenState extends State<EditScreen> {
   Future<void> setInsertIdeaInfo(IdeaInfo ideaInfo) async {
     await dbHelper.initDatabase();
     await dbHelper.insertIdeaInfo(ideaInfo);
+  }
+
+  Future setUpdateIdeaInfo(IdeaInfo ideaInfo) async {
+    await dbHelper.initDatabase();
+    await dbHelper.updateIdeaInfo(ideaInfo);
   }
 
   void initClickStatus() {
