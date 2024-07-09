@@ -25,37 +25,39 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: const Text(
-            'Archive Idea',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: const Text(
+          'Archive Idea',
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        body: Container(
-          margin: EdgeInsets.all(16),
-          child: ListView.builder(
-            itemCount: listIdeaInfo.length,
-            itemBuilder: (context, index) {
-              return listItem(index);
-            },
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            // 새 아이디어 작성 화면 이동
+      ),
+      body: Container(
+        margin: EdgeInsets.all(16),
+        child: ListView.builder(
+          itemCount: listIdeaInfo.length,
+          itemBuilder: (context, index) {
+            return listItem(index);
           },
-          child: Image.asset(
-            'assets/ideas.png',
-            width: 48,
-            height: 48,
-          ),
-          backgroundColor: Color(0xff7f52fd).withOpacity(0.7),
-        ));
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 새 아이디어 작성 화면 이동
+          Navigator.pushNamed(context, '/edit');
+        },
+        child: Image.asset(
+          'assets/ideas.png',
+          width: 48,
+          height: 48,
+        ),
+        backgroundColor: Color(0xff7f52fd).withOpacity(0.7),
+      ),
+    );
   }
 
   Future<void> getIdeaInfo() async {

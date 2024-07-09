@@ -1,3 +1,5 @@
+import 'package:business_card/data/idea_info.dart';
+import 'package:business_card/screen/edit/edit-screen.dart';
 import 'package:business_card/screen/main/main-screen.dart';
 import 'package:business_card/screen/splash/splach-screen.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +20,20 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => SplashScreen(),
         '/main': (context) => MainScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/edit') {
+          // 1. 아디어 기록값이 없다면 추가 시나리오
+          // 2. 아이디어 기록값을 넘길 수 있다면 수정 시나리오
+          final IdeaInfo? ideaInfo = settings.arguments as IdeaInfo?;
+          return MaterialPageRoute(
+            builder: (context) {
+              return EditScreen(
+                ideaInfo: ideaInfo,
+              );
+            },
+          );
+        }
       },
     );
   }
